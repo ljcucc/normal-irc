@@ -1,6 +1,6 @@
-# Normal IRC
+# CRIIRC
 
-A Normal IRC Client written in Flutter.
+CRIIRC, A Client written in Flutter.
 
 ## Getting Started
 
