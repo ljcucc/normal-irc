@@ -1,122 +1,230 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:normal_irc/pages/ChatLogPage.dart';
-import 'package:normal_irc/pages/ChatNavigationPage.dart';
-import 'package:normal_irc/pages/MemberList.dart';
+import 'package:normal_irc/app_style.dart';
+import 'package:normal_irc/data/IRCClient.dart';
+import 'package:normal_irc/pages/chat_logs.dart';
+import 'package:normal_irc/pages/navigation_views.dart';
+import 'package:normal_irc/pages/member_list.dart';
+import 'package:normal_irc/pages/server_list.dart';
+import 'package:normal_irc/pages/welcome_screen.dart';
+import 'package:normal_irc/utils.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(const MyApp());
+  // runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<IRCClient>(create: (_) => IRCClient()),
+        ChangeNotifierProvider<AppStyle>(create: (_) => AppStyle()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
+  ThemeData initThemeData(BuildContext context) {
+    AppStyle appStyle = Provider.of<AppStyle>(context);
+
+    /// modify textTheme based on appTheme
     final textTheme = Theme.of(context).textTheme;
-    final themeData = ThemeData(
+
+    // get current color and if color not exists
+    var color = appStyle.color;
+    // var bgColor = Color.fromARGB(255, 31, 25, 18);
+    var bgColor = Color.fromARGB(255, 255, 255, 255);
+    // color = appStyle.nullableColor ?? Color.fromARGB(255, 255, 0, 0);
+
+    // custom textTheme from GoogleFont
+    var customTextTheme = GoogleFonts.spaceGroteskTextTheme(textTheme).copyWith(
+      titleLarge: GoogleFonts.spaceGrotesk(
+        fontSize: 32,
+        fontWeight: FontWeight.w500,
+        letterSpacing: -1,
+        color: color,
+      ),
+      titleMedium: GoogleFonts.spaceGrotesk(
+        fontSize: 24,
+        fontWeight: FontWeight.w500,
+        letterSpacing: -1,
+        color: color,
+      ),
+      bodyLarge: GoogleFonts.spaceGrotesk(
+        fontSize: 24,
+        fontWeight: FontWeight.w500,
+        letterSpacing: -2,
+        color: color,
+      ),
+      bodyMedium: GoogleFonts.spaceGrotesk(
+        fontSize: 16,
+        letterSpacing: 0,
+        fontWeight: FontWeight.w500,
+        color: color,
+      ),
+      bodySmall: GoogleFonts.spaceGrotesk(
+        fontSize: 12,
+        letterSpacing: 0,
+        fontWeight: FontWeight.w500,
+        color: color,
+      ),
+    );
+
+    // Apply textTheme and color on themeData
+    var themeData = ThemeData(
+      // primarySwatch: getMaterialColor(color.value),
+      splashFactory: NoSplash.splashFactory,
+      primaryColor: color,
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: color,
+        selectionColor: color.withAlpha(100),
+        selectionHandleColor: color,
+      ),
       colorScheme: ColorScheme.fromSwatch(
-          primaryColorDark: Colors.black,
-          backgroundColor: Colors.white,
-          accentColor: Colors.black),
-      textTheme: GoogleFonts.spaceGroteskTextTheme(textTheme).copyWith(
-        titleLarge: GoogleFonts.spaceGrotesk(
-          fontSize: 24,
-          fontWeight: FontWeight.w500,
-          letterSpacing: -1,
+        primaryColorDark: color,
+        backgroundColor: bgColor,
+        accentColor: Colors.black,
+        primarySwatch: getMaterialColor(color),
+      ),
+      appBarTheme: AppBarTheme(backgroundColor: bgColor),
+      textTheme: customTextTheme,
+      tooltipTheme: TooltipThemeData(
+        textStyle: textTheme.bodySmall!.copyWith(color: Colors.white),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(4),
         ),
-        bodyLarge: GoogleFonts.spaceGrotesk(
-          fontSize: 24,
-          fontWeight: FontWeight.w500,
-          letterSpacing: -2,
-        ),
-        bodyMedium: GoogleFonts.spaceGrotesk(
-          fontSize: 16,
-          letterSpacing: 0,
-          fontWeight: FontWeight.w500,
-        ),
-        bodySmall: GoogleFonts.spaceGrotesk(
-          fontSize: 12,
-          letterSpacing: 0,
-          fontWeight: FontWeight.w500,
-        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        fillColor: color,
+        border: InputBorder.none,
+        hintStyle: textTheme.bodyMedium,
+        labelStyle: textTheme.bodyMedium,
       ),
       useMaterial3: true,
     );
 
-    return MaterialApp(
-      title: 'Normal IRC',
-      theme: themeData,
-      home: const MyHomePage(title: '## CHAT'),
-    );
+    return themeData;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var themeData = initThemeData(context);
+    return Consumer<AppStyle>(builder: (buildecontext, provider, child) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Normal IRC',
+        theme: themeData,
+        home: const MyHomePage(),
+      );
+    });
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var inited = false;
+
+  Future<bool> isFirstTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool firstTime = prefs.getBool("first_time") ?? false;
+    return firstTime;
+  }
+
+  Future openWelcomeScreen() async {
+    if (!await isFirstTime()) {
+      setState(() {
+        inited = true;
+      });
+      return;
+    }
+    // Future.delayed(Duration(seconds: 1), () => WelcomeScreen.open(context));
+    WelcomeScreen.open(context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    openWelcomeScreen().then((value) => print("welcome!")).catchError(print);
+  }
+
+  @override
+  void didUpdateWidget(covariant MyHomePage oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+
+    openWelcomeScreen();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return OrientationBuilder(builder: (context, orientation) {
-      return LayoutBuilder(builder: (context, constraints) {
-        var count = 1;
-        // layout based on screen size ( if landscape )
-        if (constraints.maxWidth < 750) {
-          count = 1;
-        } else if (constraints.maxWidth < 1200) {
-          count = 2;
-        } else {
-          count = 3;
-        }
-        // overwrite layout based on orientation
-        if (orientation == Orientation.portrait) {
-          count = 1;
-        }
+    if (inited) return const HomeLayout();
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(color: Colors.white),
+      ),
+    );
+  }
+}
 
-        const splitLine = BoxDecoration(
-          border: Border(left: BorderSide(width: 1.5, color: Colors.black26)),
-        );
+class HomeLayout extends StatelessWidget {
+  const HomeLayout({super.key});
 
-        var layouts = [
-          Flexible(
-            flex: 20,
-            child: Container(
-              constraints: count == 1
-                  ? null
-                  : BoxConstraints(maxWidth: 400, minWidth: 100),
-              child: ChatNavigationPage(),
-            ),
+  List<Widget> get layouts => [
+        Flexible(
+          flex: 20,
+          child: Container(
+            child: ChatNavigationPage(),
           ),
-          Flexible(
-            flex: 45,
-            child: Container(
-              // decoration: splitLine,
-              child: ChatLogPage(),
-            ),
+        ),
+        Flexible(
+          flex: 40,
+          child: Container(
+            child: ChatLogPageWidget(),
           ),
-          Flexible(
-            flex: 15,
-            child: Container(
-              constraints: BoxConstraints(maxWidth: 400, minWidth: 333),
-              // decoration: splitLine,
-              child: MemberListPage(),
-            ),
-          )
-        ];
-        return Scaffold(
-          body: Container(
-            child: Row(
-              children: layouts.sublist(0, count),
-            ),
+        ),
+        Flexible(
+          flex: 20,
+          child: Container(
+            constraints: BoxConstraints(maxWidth: 400, minWidth: 333),
+            child: MemberListPage(),
           ),
-        );
-      });
+        )
+      ];
+
+  // List<Widget> get serverList => [
+  //       Flexible(
+  //         flex: 1,
+  //         child: ServerListWidget2(),
+  //       ),
+  //     ];
+
+  Widget UI(int layoutInt) {
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Row(
+          // children: layouts,
+          children: layouts.sublist(0, layoutInt),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      int layoutInt = getLayoutInt(context);
+      return UI(layoutInt);
     });
   }
 }

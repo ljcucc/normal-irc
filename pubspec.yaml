@@ -41,6 +41,8 @@ dependencies:
     git:
       url: https://github.com/ostafen/irc.dart
       ref: 4802034c98dd0cbfe3341af5d4f413ba11827dce
+  marquee: ^2.2.3
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -65,8 +67,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - images/ur_alone.webp
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
