@@ -111,7 +111,7 @@ class NewServerPageWidget extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text("Connect to server"),
-              titleTextStyle: textTheme.titleMedium,
+              titleTextStyle: textTheme.titleSmall,
               iconTheme: IconTheme.of(context).copyWith(color: color),
             ),
             body: NewServerPageWidget(),

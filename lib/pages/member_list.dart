@@ -22,7 +22,7 @@ class _MemberListPageState extends State<MemberListPage> {
         children: [
           Text(
             "members",
-            style: textTheme.titleLarge,
+            style: textTheme.titleMedium,
             textAlign: TextAlign.left,
           ),
         ],

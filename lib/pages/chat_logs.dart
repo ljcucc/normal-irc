@@ -1,6 +1,9 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_native_text_input/flutter_native_text_input.dart';
 import 'package:normal_irc/app_style.dart';
 import 'package:normal_irc/main.dart';
 import 'package:normal_irc/utils.dart';
@@ -25,7 +28,7 @@ class ChatLogPageWidget extends StatelessWidget {
       child: Column(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ChatHeaderWidget(),
+          // ChatHeaderWidget(),
           Expanded(
             child: Container(
               padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
@@ -49,27 +52,7 @@ class ChatLogPageWidget extends StatelessWidget {
           SizedBox(
             height: 16,
           ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: color,
-                width: 2.5,
-              ),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: TextField(
-                style: textTheme.bodyMedium,
-                decoration: InputDecoration(
-                  fillColor: color,
-                  border: InputBorder.none,
-                  hintText: 'Enter after you double check',
-                  hintStyle: textTheme.bodyMedium,
-                  labelStyle: textTheme.bodyMedium,
-                  enabledBorder: InputBorder.none,
-                ),
-                cursorColor: color),
-          ),
+          ChatInput(),
         ],
       ),
     );
@@ -86,20 +69,31 @@ class ChatHeaderWidget extends StatelessWidget {
     var color = appStyle.color;
 
     return Container(
-      child: Column(
+      padding: EdgeInsets.only(left: 24, bottom: 16, right: 24),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
-            child: Text(
-              "## CHAT",
-              style: textTheme.titleLarge!
-                  .copyWith(backgroundColor: color, color: Colors.white),
-              textAlign: TextAlign.left,
-            ),
+          // padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "## CHAT",
+                style: textTheme.titleMedium!
+                    .copyWith(backgroundColor: color, color: Colors.white),
+                textAlign: TextAlign.left,
+              ),
+              Text(
+                "mode: nvq",
+                style: textTheme.bodyLarge,
+                textAlign: TextAlign.left,
+              )
+            ],
           ),
+          Spacer(),
           Container(
-            constraints: BoxConstraints(maxWidth: 400),
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
+            constraints: BoxConstraints(maxWidth: 200),
+            // padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
             child: Text(
               exmpaleTopic,
               style: textTheme.bodySmall?.copyWith(height: 1),
@@ -147,7 +141,7 @@ class ChatRecord extends StatelessWidget {
             Text(
               "Hello\nUwU This is a test message...",
               style: textTheme.bodyMedium
-                  ?.copyWith(height: 1, fontWeight: FontWeight.w100),
+                  ?.copyWith(height: 1, fontWeight: FontWeight.w300),
               maxLines: 3,
             ),
           ],
@@ -208,5 +202,120 @@ class ChatLogPageScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class CustomContextMenuButton extends StatefulWidget {
+  final ContextMenuButtonItem button;
+  const CustomContextMenuButton({super.key, required this.button});
+
+  @override
+  State<CustomContextMenuButton> createState() =>
+      _CustomContextMenuButtonState();
+}
+
+class _CustomContextMenuButtonState extends State<CustomContextMenuButton> {
+  bool onSelect = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Provider.of<AppStyle>(context).color;
+    final textTheme = Theme.of(context).textTheme;
+
+    return MouseRegion(
+      onEnter: (event) {
+        setState(() {
+          onSelect = true;
+        });
+      },
+      onExit: (event) {
+        setState(() {
+          onSelect = false;
+        });
+      },
+      child: GestureDetector(
+        onTap: widget.button.onPressed,
+        child: SizedBox(
+          width: 300,
+          child: Container(
+            padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+            decoration:
+                BoxDecoration(color: onSelect ? color : Colors.transparent),
+            child: Text(
+              CupertinoTextSelectionToolbarButton.getButtonLabel(
+                  context, widget.button),
+              textAlign: TextAlign.start,
+              style: textTheme.bodyMedium!
+                  .copyWith(color: onSelect ? Colors.white : color),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget contextMenuBuilder(
+      BuildContext context, EditableTextState editableTextState) {
+    return CupertinoAdaptiveTextSelectionToolbar(
+      anchors: editableTextState.contextMenuAnchors,
+      children: editableTextState.contextMenuButtonItems.map((e) {
+        return CustomContextMenuButton(button: e);
+      }).toList(),
+    );
+  }
+}
+
+class ChatInput extends StatelessWidget {
+  const ChatInput({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Provider.of<AppStyle>(context).color;
+    final textTheme = Theme.of(context).textTheme;
+
+    final flutterTextField = TextField(
+      style: textTheme.bodyMedium,
+      decoration: InputDecoration(
+        fillColor: color,
+        border: InputBorder.none,
+        hintText: 'Enter after you double check',
+        hintStyle: textTheme.bodyMedium,
+        labelStyle: textTheme.bodyMedium,
+        enabledBorder: InputBorder.none,
+      ),
+      cursorColor: color,
+      contextMenuBuilder: kIsWeb ||
+              [
+                TargetPlatform.android,
+                TargetPlatform.iOS,
+              ].contains(defaultTargetPlatform)
+          ? /* default menu*/ (context, e) =>
+              AdaptiveTextSelectionToolbar.editableText(
+                editableTextState: e,
+              )
+          : _CustomContextMenuButtonState.contextMenuBuilder,
+    );
+
+    print("default is");
+    print([
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    ].contains(defaultTargetPlatform));
+
+    // final nativeTextField = NativeTextInput();
+
+    return Container(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: color,
+            width: 2.5,
+          ),
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: [TargetPlatform.iOS, TargetPlatform.android]
+                .contains(defaultTargetPlatform)
+            ? flutterTextField
+            : flutterTextField);
   }
 }
