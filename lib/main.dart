@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:normal_irc/app_style.dart';
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
     // get current color and if color not exists
     var color = appStyle.color;
     // var bgColor = Color.fromARGB(255, 31, 25, 18);
-    var bgColor = Color.fromARGB(255, 255, 255, 255);
+    var bgColor = appStyle.bgColor;
     // color = appStyle.nullableColor ?? Color.fromARGB(255, 255, 0, 0);
 
     // custom textTheme from GoogleFont
@@ -89,6 +91,7 @@ class MyApp extends StatelessWidget {
         selectionHandleColor: color,
       ),
       colorScheme: ColorScheme.fromSwatch(
+        brightness: Brightness.light,
         primaryColorDark: color,
         backgroundColor: bgColor,
         accentColor: Colors.black,
@@ -97,7 +100,7 @@ class MyApp extends StatelessWidget {
       appBarTheme: AppBarTheme(backgroundColor: bgColor),
       textTheme: customTextTheme,
       tooltipTheme: TooltipThemeData(
-        textStyle: textTheme.bodySmall!.copyWith(color: Colors.white),
+        textStyle: textTheme.bodySmall!.copyWith(color: appStyle.bgColor),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(4),
@@ -203,15 +206,8 @@ class HomeLayout extends StatelessWidget {
             constraints: BoxConstraints(maxWidth: 400, minWidth: 333),
             child: MemberListPage(),
           ),
-        )
+        ),
       ];
-
-  // List<Widget> get serverList => [
-  //       Flexible(
-  //         flex: 1,
-  //         child: ServerListWidget2(),
-  //       ),
-  //     ];
 
   Widget UI(int layoutInt) {
     return Scaffold(

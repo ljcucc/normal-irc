@@ -8,8 +8,10 @@ class AppStyle with ChangeNotifier {
   int layoutInt = 1;
 
   // Color get color => _color ?? Color.fromARGB(255, 255, 140, 0);
-  Color get color => _color ?? Color.fromARGB(255, 255, 0, 0);
+  Color get color => _color ?? Color.fromARGB(255, 0, 0, 0);
   Color? get nullableColor => _color;
+
+  Color get bgColor => Color.fromARGB(255, 255, 255, 255);
 
   void changeColor(Color color) {
     _color = color;

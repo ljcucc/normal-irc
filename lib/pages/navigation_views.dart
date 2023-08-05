@@ -5,13 +5,14 @@ import 'package:normal_irc/main.dart';
 import 'package:normal_irc/pages/chat_logs.dart';
 import 'package:normal_irc/pages/new_server.dart';
 import 'package:normal_irc/utils.dart';
+import 'package:normal_irc/widgets/clickable_text_link.dart';
 import 'package:provider/provider.dart';
 
 import 'package:normal_irc/main.dart';
 
 class ChatNavigationPage extends StatelessWidget {
   get IRCView => const [
-        ChatServerTitleWidget(title: "Libera Chat"),
+        ChatServerTitleWidget(title: "CRIIRC"),
         IRCChannelListWidget(),
       ];
 
@@ -122,7 +123,7 @@ class ChannelListWidget extends StatelessWidget {
               children: [
                 Text(
                   item,
-                  style: textTheme.bodyLarge,
+                  style: textTheme.titleSmall,
                   textAlign: TextAlign.left,
                 ),
               ],
@@ -163,9 +164,10 @@ class ChatServerTitleWidget extends StatelessWidget {
     return Container(
       width: double.infinity,
       // padding: EdgeInsets.fromLTRB(0, 0, 0, 80),
-      child: Text(
+      child: ClickableTextLink(
         title,
         style: textTheme.titleLarge,
+        onClick: () {},
       ),
     );
   }
@@ -198,7 +200,7 @@ class JoinButtonWidget extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(24, 14, 24, 14),
         child: Text(
           "Join Channel",
-          style: textTheme.bodyMedium?.copyWith(color: Colors.white),
+          style: textTheme.bodyMedium?.copyWith(color: appStyle.bgColor),
         ),
       ),
     );

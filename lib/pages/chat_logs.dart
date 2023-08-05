@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:normal_irc/app_style.dart';
 import 'package:normal_irc/main.dart';
 import 'package:normal_irc/utils.dart';
+import 'package:normal_irc/widgets/custom_context_toolbar.dart';
 import 'package:provider/provider.dart';
 
 const exmpaleTopic = '''
@@ -28,7 +29,7 @@ class ChatLogPageWidget extends StatelessWidget {
       child: Column(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ChatHeaderWidget(),
+          ChatHeaderWidget(),
           Expanded(
             child: Container(
               padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
@@ -79,27 +80,33 @@ class ChatHeaderWidget extends StatelessWidget {
             children: [
               Text(
                 "## CHAT",
-                style: textTheme.titleMedium!
-                    .copyWith(backgroundColor: color, color: Colors.white),
+                style: textTheme.bodyLarge!
+                    .copyWith(backgroundColor: color, color: appStyle.bgColor),
                 textAlign: TextAlign.left,
               ),
               Text(
                 "mode: nvq",
-                style: textTheme.bodyLarge,
+                style: textTheme.bodySmall,
                 textAlign: TextAlign.left,
               )
             ],
           ),
-          Spacer(),
-          Container(
-            constraints: BoxConstraints(maxWidth: 200),
-            // padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
-            child: Text(
-              exmpaleTopic,
-              style: textTheme.bodySmall?.copyWith(height: 1),
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 3,
+          Flexible(
+            flex: 1,
+            child: Container(
+              padding: EdgeInsets.only(left: 16),
+              alignment: Alignment.centerRight,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 200, minWidth: 50),
+                // padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
+                child: Text(
+                  exmpaleTopic,
+                  style: textTheme.bodySmall?.copyWith(height: 1),
+                  textAlign: TextAlign.left,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                ),
+              ),
             ),
           ),
         ],
@@ -140,7 +147,7 @@ class ChatRecord extends StatelessWidget {
             // SizedBox(height: 16),
             Text(
               "Hello\nUwU This is a test message...",
-              style: textTheme.bodyMedium
+              style: textTheme.bodySmall
                   ?.copyWith(height: 1, fontWeight: FontWeight.w300),
               maxLines: 3,
             ),
@@ -175,92 +182,33 @@ class ChatLogPageScreen extends StatelessWidget {
         // ),
         child: ChatLogPageWidget(),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: color,
-        currentIndex: 1,
-        elevation: 0,
-        onTap: (value) {
-          switch (value) {
-            case 0:
-              Navigator.pop(context);
-              break;
-          }
-        },
-        items: [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.arrow_back),
-            label: "Back",
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: "Channels",
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: "Members",
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class CustomContextMenuButton extends StatefulWidget {
-  final ContextMenuButtonItem button;
-  const CustomContextMenuButton({super.key, required this.button});
-
-  @override
-  State<CustomContextMenuButton> createState() =>
-      _CustomContextMenuButtonState();
-}
-
-class _CustomContextMenuButtonState extends State<CustomContextMenuButton> {
-  bool onSelect = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Provider.of<AppStyle>(context).color;
-    final textTheme = Theme.of(context).textTheme;
-
-    return MouseRegion(
-      onEnter: (event) {
-        setState(() {
-          onSelect = true;
-        });
-      },
-      onExit: (event) {
-        setState(() {
-          onSelect = false;
-        });
-      },
-      child: GestureDetector(
-        onTap: widget.button.onPressed,
-        child: SizedBox(
-          width: 300,
-          child: Container(
-            padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
-            decoration:
-                BoxDecoration(color: onSelect ? color : Colors.transparent),
-            child: Text(
-              CupertinoTextSelectionToolbarButton.getButtonLabel(
-                  context, widget.button),
-              textAlign: TextAlign.start,
-              style: textTheme.bodyMedium!
-                  .copyWith(color: onSelect ? Colors.white : color),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  static Widget contextMenuBuilder(
-      BuildContext context, EditableTextState editableTextState) {
-    return CupertinoAdaptiveTextSelectionToolbar(
-      anchors: editableTextState.contextMenuAnchors,
-      children: editableTextState.contextMenuButtonItems.map((e) {
-        return CustomContextMenuButton(button: e);
-      }).toList(),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   unselectedItemColor: color,
+      //   selectedItemColor: color,
+      //   currentIndex: 1,
+      //   elevation: 0,
+      //   onTap: (value) {
+      //     switch (value) {
+      //       case 0:
+      //         Navigator.pop(context);
+      //         break;
+      //     }
+      //   },
+      //   items: [
+      //     const BottomNavigationBarItem(
+      //       icon: Icon(Icons.arrow_back),
+      //       label: "Back",
+      //     ),
+      //     const BottomNavigationBarItem(
+      //       icon: Icon(Icons.home_outlined),
+      //       label: "Channels",
+      //     ),
+      //     const BottomNavigationBarItem(
+      //       icon: Icon(Icons.person_outline),
+      //       label: "Members",
+      //     )
+      //   ],
+      // ),
     );
   }
 }
@@ -273,37 +221,6 @@ class ChatInput extends StatelessWidget {
     final color = Provider.of<AppStyle>(context).color;
     final textTheme = Theme.of(context).textTheme;
 
-    final flutterTextField = TextField(
-      style: textTheme.bodyMedium,
-      decoration: InputDecoration(
-        fillColor: color,
-        border: InputBorder.none,
-        hintText: 'Enter after you double check',
-        hintStyle: textTheme.bodyMedium,
-        labelStyle: textTheme.bodyMedium,
-        enabledBorder: InputBorder.none,
-      ),
-      cursorColor: color,
-      contextMenuBuilder: kIsWeb ||
-              [
-                TargetPlatform.android,
-                TargetPlatform.iOS,
-              ].contains(defaultTargetPlatform)
-          ? /* default menu*/ (context, e) =>
-              AdaptiveTextSelectionToolbar.editableText(
-                editableTextState: e,
-              )
-          : _CustomContextMenuButtonState.contextMenuBuilder,
-    );
-
-    print("default is");
-    print([
-      TargetPlatform.android,
-      TargetPlatform.iOS,
-    ].contains(defaultTargetPlatform));
-
-    // final nativeTextField = NativeTextInput();
-
     return Container(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
         decoration: BoxDecoration(
@@ -313,9 +230,6 @@ class ChatInput extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(100),
         ),
-        child: [TargetPlatform.iOS, TargetPlatform.android]
-                .contains(defaultTargetPlatform)
-            ? flutterTextField
-            : flutterTextField);
+        child: CustomInput(hint: 'Enter after you double check'));
   }
 }

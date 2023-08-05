@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:normal_irc/app_style.dart';
 import 'package:normal_irc/utils.dart';
+import 'package:normal_irc/widgets/custom_context_toolbar.dart';
 import 'package:provider/provider.dart';
 
 class AddServerWidget extends StatelessWidget {
@@ -9,7 +10,8 @@ class AddServerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final color = Provider.of<AppStyle>(context).color;
+    final appStyle = Provider.of<AppStyle>(context);
+    final color = appStyle.color;
 
     return GestureDetector(
       onTap: () {},
@@ -20,7 +22,7 @@ class AddServerWidget extends StatelessWidget {
         child: Text(
           "Add Server",
           textAlign: TextAlign.center,
-          style: textTheme.bodyMedium!.copyWith(color: Colors.white),
+          style: textTheme.bodyMedium!.copyWith(color: appStyle.bgColor),
         ),
       ),
     );
@@ -36,17 +38,12 @@ class NewServerForm extends StatelessWidget {
     final color = Provider.of<AppStyle>(context).color;
 
     return Container(
-      padding: EdgeInsets.only(left: 16, right: 16),
-      decoration: BoxDecoration(color: color.withOpacity(0.07)),
-      child: TextFormField(
-        obscureText: obscureText,
-        style: textTheme.bodyMedium,
-        decoration: InputDecoration(
-            hintText: label,
-            hintStyle:
-                textTheme.bodyMedium!.copyWith(color: color.withOpacity(0.75))),
-      ),
-    );
+        padding: EdgeInsets.only(left: 16, right: 16),
+        decoration: BoxDecoration(color: color.withOpacity(0.07)),
+        child: CustomInput(
+          hint: label,
+          obscureText: obscureText,
+        ));
   }
 
   @override
