@@ -40,33 +40,38 @@ class MyApp extends StatelessWidget {
     // color = appStyle.nullableColor ?? Color.fromARGB(255, 255, 0, 0);
 
     // custom textTheme from GoogleFont
-    var customTextTheme = GoogleFonts.spaceGroteskTextTheme(textTheme).copyWith(
-      titleLarge: GoogleFonts.spaceGrotesk(
+    var customTextTheme = textTheme.copyWith(
+      titleLarge: textTheme.titleLarge!.copyWith(
+        fontSize: 48,
+        fontWeight: FontWeight.w500,
+        letterSpacing: -1,
+        color: color,
+      ),
+      titleMedium: textTheme.titleMedium!.copyWith(
         fontSize: 32,
         fontWeight: FontWeight.w500,
         letterSpacing: -1,
         color: color,
       ),
-      titleMedium: GoogleFonts.spaceGrotesk(
+      titleSmall: textTheme.titleMedium!.copyWith(
         fontSize: 24,
         fontWeight: FontWeight.w500,
-        letterSpacing: -1,
         color: color,
       ),
-      bodyLarge: GoogleFonts.spaceGrotesk(
-        fontSize: 24,
+      bodyLarge: textTheme.titleMedium!.copyWith(
+        fontSize: 20,
         fontWeight: FontWeight.w500,
         letterSpacing: -2,
         color: color,
       ),
-      bodyMedium: GoogleFonts.spaceGrotesk(
+      bodyMedium: textTheme.bodyMedium!.copyWith(
         fontSize: 16,
         letterSpacing: 0,
         fontWeight: FontWeight.w500,
         color: color,
       ),
-      bodySmall: GoogleFonts.spaceGrotesk(
-        fontSize: 12,
+      bodySmall: textTheme.bodySmall!.copyWith(
+        fontSize: 14,
         letterSpacing: 0,
         fontWeight: FontWeight.w500,
         color: color,
