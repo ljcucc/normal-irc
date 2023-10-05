@@ -43,6 +43,8 @@ dependencies:
       ref: 4802034c98dd0cbfe3341af5d4f413ba11827dce
   marquee: ^2.2.3
   shared_preferences: ^2.2.0
+  # flutter_native_text_input: ^2.4.0
+
 
 dev_dependencies:
   flutter_test:

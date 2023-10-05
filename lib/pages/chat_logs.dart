@@ -24,7 +24,7 @@ class ChatLogPageWidget extends StatelessWidget {
     return Container(
       // width: double.infinity,
       // height: double.infinity,
-      padding: EdgeInsets.fromLTRB(16, 32, 16, 16),
+      padding: EdgeInsets.fromLTRB(32, 32, 32, 16),
       alignment: Alignment.topLeft,
       child: Column(
         // crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,14 +32,14 @@ class ChatLogPageWidget extends StatelessWidget {
           ChatHeaderWidget(),
           Expanded(
             child: Container(
-              padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 2.5,
-                  color: color,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
+              // padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
+              // decoration: BoxDecoration(
+              //   border: Border.all(
+              //     width: 2.5,
+              //     color: color,
+              //   ),
+              //   borderRadius: BorderRadius.circular(20),
+              // ),
               child: ListView(
                 children: [
                   for (var i = 0; i < 100; i++)
@@ -70,7 +70,7 @@ class ChatHeaderWidget extends StatelessWidget {
     var color = appStyle.color;
 
     return Container(
-      padding: EdgeInsets.only(left: 24, bottom: 16, right: 24),
+      padding: EdgeInsets.only(bottom: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -222,13 +222,14 @@ class ChatInput extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
         decoration: BoxDecoration(
-          border: Border.all(
-            color: color,
-            width: 2.5,
-          ),
-          borderRadius: BorderRadius.circular(100),
+          color: color.withOpacity(0.05),
+          // border: Border.all(
+          //   color: color,
+          //   width: 2.5,
+          // ),
+          // borderRadius: BorderRadius.circular(100),
         ),
         child: CustomInput(hint: 'Enter after you double check'));
   }

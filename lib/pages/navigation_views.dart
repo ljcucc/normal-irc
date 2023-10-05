@@ -194,7 +194,7 @@ class JoinButtonWidget extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(100),
+          // borderRadius: BorderRadius.circular(100),
         ),
         width: double.infinity,
         padding: EdgeInsets.fromLTRB(24, 14, 24, 14),
